@@ -22,35 +22,39 @@ var cdestination = $("#train-destination");
           appId: "1:842772261153:web:1af54899c893a73d243660"
         };
         // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
+        
 var db = firebase.database();
 
-database.ref("/trains").on("child_added", function (snapshot) {
+database.ref("/trains").on("child_added", function(snapshot) {
      //local variables
      var diff = 0;
      var remainder = 0;
-     var arrivalMin = "";
-     var futuretime = "";
+     var arrivinging = "";
+     var nextrain = "";
      var frequency = snapshot.val().frequency;
+
      diff = moment().diff(moment.unix(snapshot.val().time), "minutes");
 
      remainder = diff % frequency;
 
-     arrivalMin = frequency - remainder;
+     arrivinging = frequency - remainder;
      
      //format for standard time
-     futuretime = moment().add(arrivalMin), "m").format("hh.mm A");
+     nextrain = moment().add(arrivinging, "m").format("hh:mm A");
 
-$("#table-data").append) (
-     "<tr><td>" + snapshot.val().name + "</td>" +
-     "<td>" + snapshot.val().destination + "</td>" +
-     "<td>" + frequency + "</td>" +
-     "<td>" + arrivalMin + "</td>" +
-     "<td>" + futuretime + "   " + "<a><span class='glyphicon glyphicon-remove icon-hidden' aria-hidden='true'></span></a>" + "</td></tr>"
-);
+    // append to our table of trains, inside tbody, with a new row of the train data
+    $("#table-data").append(
+        "<tr><td>" + snapshot.val().name + "</td>" +
+        "<td>" + snapshot.val().destination + "</td>" +
+        "<td>" + frequency + "</td>" +
+        "<td>" + arrivinging + "</td>" +
+        "<td>" + nextrain + "  " + "<a><span class='glyphicon glyphicon-remove icon-hidden' aria-hidden='true'></span></a>" + "</td></tr>"
+    );
 
-$("span").hide();
+    $("span").hide();
 
+  
 });
      
      
