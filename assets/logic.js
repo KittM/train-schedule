@@ -1,5 +1,6 @@
 
 //global variables
+$(document).ready(function() {
 
 var trainName = "";
 var destination = "";
@@ -14,51 +15,55 @@ var cTrainTime = $("#train-time")
 var cTimeFreq = $("#time-freq")
 
 //call firebase
-     var firebaseConfig = {
-          apiKey: "AIzaSyC4WTdsGiBHyXuX9Pne3UTEX5x6Rnii6lI",
-          authDomain: "bootcamp-ee030.firebaseapp.com",
-          databaseURL: "https://bootcamp-ee030.firebaseio.com",
-          projectId: "bootcamp-ee030",
-          storageBucket: "bootcamp-ee030.appspot.com",
-          messagingSenderId: "842772261153",
-          appId: "1:842772261153:web:1af54899c893a73d243660"
-        };
-        // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+var firebaseConfig = {
+     apiKey: "AIzaSyDyflBHwL_RBLgc1TE_Rv_6MHS9TCHcD-8",
+     authDomain: "traintimes-18cdc.firebaseapp.com",
+     databaseURL: "https://traintimes-18cdc.firebaseio.com",
+     storageBucket: "traintimes-18cdc.appspot.com",
+     messagingSenderId: "802793995900",
+
+   };
+   // Initialize Firebase
+   firebase.initializeApp(firebaseConfig);
         
-var db = firebase.database();
+     var db = firebase.database();
+     //errrr database is not a function?
 
-database.ref("/trains").on("child_added", function (snapshot) {
+
+     database.ref("/schedule").on("child_added", function(snapshot) {
      //local variables
-     var diff = 0;
-     var remainder = 0;
-     var arrivinging = "";
-     var nextrain = "";
-     var frequency = snapshot.val().frequency;
+          var diff = 0;
+          var remainder = 0;
+          var arrivinging = "";
+          var nextrain = "";
+          var frequency = snapshot.val().frequency;
 
-     diff = moment().diff(moment.unix(snapshot.val().time), "minutes");
+          
 
-     remainder = diff % frequency;
 
-     arrivinging = frequency - remainder;
-     
-     //format for standard time
-     nextrain = moment().add(arrivinging, "m").format("hh:mm A");
+          diff = moment().diff(moment.unix(snapshot.val().time), "minutes");
+
+          remainder = diff % frequency;
+
+          arrivinging = frequency - remainder;
+          
+          //format for standard time
+          nextrain = moment().add(arrivinging, "m").format("hh:mm A");
 
      // append to our table of trains, inside tbody, with a new row of the train data
-     $("#table-data").append(
-          "<tr><td>" + snapshot.val().name + "</td>" +
-          "<td>" + snapshot.val().destination + "</td>" +
-          "<td>" + frequency + "</td>" +
-          "<td>" + arrivinging + "</td>" +
-          "<td>" + nextrain + "  " + "<a><span class='glyphicon glyphicon-remove icon-hidden' aria-hidden='true'></span></a>" + "</td></tr>"
-     );
-     console.log("#table-data");
+          $("#table-data").append(
+               "<tr><td>" + snapshot.val().name + "</td>" +
+               "<td>" + snapshot.val().destination + "</td>" +
+               "<td>" + frequency + "</td>" +
+               "<td>" + arrivinging + "</td>" +
+               "<td>" + nextrain + "  " + "<a><span class='glyphicon glyphicon-remove icon-hidden' aria-hidden='true'></span></a>" + "</td></tr>"
+          );
+          console.log("#table-data");
 
-     $("span").hide();
+          $("span").hide();
 
-  
-});
+     
+     });
 
 var saveinputs = function (event) {
      event.prevenDefault();
@@ -68,7 +73,7 @@ var saveinputs = function (event) {
      trainTime = moment(cTrainTime.val().trim(), "HH:mm").subtract(1, "years").format("X");
      frequency = cTimeFreq.val().trim();
 
-     db.ref("/trains").push({
+     db.ref("/schedule").push({
           name: trainName,
           destination: destination,
           time: trainTime,
@@ -96,6 +101,18 @@ $("btn-add").on("click", function (event) {
      
 });
 
-
+$('form').on("keypress", function (event) {
+     if (event.which === 13) {
+          if (cTrain.val().length === 0 || cdestination.val().length === 0 || cTrainTime.val().length === 0 || cTimeFreq === 0) {
+               alert("missing fields");
+          }
+          else {
+               saveinputs(event);
+          }
      
+}
+});
+     
+});
+
      
